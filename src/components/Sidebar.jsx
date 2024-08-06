@@ -9,7 +9,7 @@ import {
   Users,
 } from "lucide-react";
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
 const SIDEBAR_ITEMS = [
@@ -17,7 +17,7 @@ const SIDEBAR_ITEMS = [
     name: "Overview",
     icon: BarChart2,
     color: "#6366f1",
-    path: "/",
+    href: "/",
   },
   { name: "Products", icon: ShoppingBag, color: "#8B5CF6", href: "/products" },
   { name: "Users", icon: Users, color: "#EC4899", href: "/users" },
@@ -55,6 +55,19 @@ const Sidebar = () => {
                   size={20}
                   style={{ color: item.color, minWidth: "20px" }}
                 />
+                <AnimatePresence>
+                  {isSidebarOpen && (
+                    <motion.span
+                      className="ml-4 whitespace-nowrap"
+                      initial={{ opacity: 0, width: 0 }}
+                      animate={{ opacity: 1, width: "auto" }}
+                      exit={{ opacity: 0, width: 0 }}
+                      transition={{ duration: 0.2, delay: 0.3 }}
+                    >
+                      {item.name}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </motion.div>
             </Link>
           ))}
