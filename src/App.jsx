@@ -1,20 +1,51 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import OverviewPage from "./pages/OverviewPage";
 import ProductsPage from "./pages/ProductsPage";
 import Sidebar from "./components/Sidebar";
+import SettingsPage from "./pages/SettingsPage";
+import Login from "./pages/Login";
+import { useState } from "react";
+
+function PrivateRoute({ isLoggedIn, children }) {
+  return isLoggedIn ? children : <Navigate to="/login" />;
+}
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const updateStatus = () => {
+    setIsLoggedIn((prev) => !prev);
+  };
+
   return (
     <div className="flex h-screen bg-gray-900 text-gray-100 overflow-hidden">
-      <div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 opacity-80" />
-        <div className="absolute inset-0 backdrop-blur-sm" />
-      </div>
-
-      <Sidebar />
+      {isLoggedIn && <Sidebar />}
       <Routes>
-        <Route path="/" element={<OverviewPage />} />
-        <Route path="/products" element={<ProductsPage />} />
+        <Route path="/login" element={<Login updateStatus={updateStatus} />} />
+        <Route
+          path="/"
+          element={
+            <PrivateRoute isLoggedIn={isLoggedIn}>
+              <OverviewPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/products"
+          element={
+            <PrivateRoute isLoggedIn={isLoggedIn}>
+              <ProductsPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <PrivateRoute isLoggedIn={isLoggedIn}>
+              <SettingsPage />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </div>
   );
