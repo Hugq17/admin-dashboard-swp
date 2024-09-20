@@ -14,14 +14,14 @@ const salesData = [
   { name: "Jul", sales: 4200 },
   { name: "Aug", sales: 3800 },
   { name: "Sep", sales: 5100 },
+  { name: "Jul", sales: 3900 },
+  { name: "Jul", sales: 5200 },
+  { name: "Jul", sales: 2300 },
   { name: "Jul", sales: 4200 },
-  { name: "Jul", sales: 4200 },
-  { name: "Jul", sales: 4200 },
-  { name: "Jul", sales: 4200 },
-  { name: "Jul", sales: 4200 },
-  { name: "Jul", sales: 4200 },
-  { name: "Jul", sales: 4200 },
-  { name: "Jul", sales: 4200 },
+  { name: "Jul", sales: 2800 },
+  { name: "Jul", sales: 3600 },
+  { name: "Jul", sales: 5900 },
+  { name: "Jul", sales: 1000 },
   { name: "Jul", sales: 4200 },
 ];
 const SalesOverviewChart = () => {
@@ -48,16 +48,15 @@ const SalesOverviewChart = () => {
                 borderColor: "#4B5563",
               }}
               itemStyle={{ color: "#E5E7EB" }}
-            >
-              <Line
-                type="monotone"
-                dataKey="sales"
-                stroke="#6366F1"
-                strokeWidth={3}
-                dot={{ fill: "#6366F1", strokeWidth: 2, r: 6 }}
-                activeDot={{ r: 8, strokeWidth: 2 }}
-              />
-            </Tooltip>
+            />
+            <Line
+              type="monotone"
+              dataKey="sales"
+              stroke="#6366F1"
+              strokeWidth={3}
+              dot={{ fill: "#6366F1", strokeWidth: 2, r: 6 }}
+              activeDot={{ r: 8, strokeWidth: 2 }}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
