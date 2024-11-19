@@ -1,5 +1,5 @@
 import { Route, Routes, Navigate, useLocation } from "react-router-dom";
-import OverviewPage from "./pages/OverviewPage";
+import Homepage from "./pages/Homepage/Homepage";
 import ProductsPage from "./pages/ProductsPage";
 import Sidebar from "./components/Sidebar";
 import SettingsPage from "./pages/SettingsPage";
@@ -14,32 +14,39 @@ function PrivateRoute({ isLoggedIn, children }) {
     <Navigate to="/login" replace state={{ from: location }} />
   );
 }
-
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  // Boolean(localStorage.getItem("authToken"))
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    Boolean(localStorage.getItem("accessToken"))
+  );
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("accessToken");
     setIsLoggedIn(Boolean(token));
   }, []);
 
   const updateStatus = () => {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("accessToken");
     setIsLoggedIn(Boolean(token));
   };
 
   const logout = () => {
-    localStorage.removeItem("authToken");
+    localStorage.removeItem("accessToken");
     setIsLoggedIn(false);
   };
 
   return (
-    <div className="">
-      {/* {isLoggedIn && <Sidebar logout={logout} />} */}
+    <div className="flex h-screen bg-gray-900 text-gray-100">
+      {isLoggedIn && <Sidebar logout={logout} />}
       <Routes>
         <Route path="/login" element={<Login updateStatus={updateStatus} />} />
-        <Route path="/dashboard" element={<OverviewPage />} />
+        <Route
+          path="/trangchu"
+          element={
+            <PrivateRoute isLoggedIn={isLoggedIn}>
+              <Homepage />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </div>
   );

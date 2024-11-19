@@ -8,16 +8,16 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SIDEBAR_ITEMS = [
   {
-    name: "Overview",
+    name: "Trang chủ",
     icon: BarChart2,
     color: "#6366f1",
-    href: "/",
+    href: "/trangchu",
   },
   { name: "Products", icon: ShoppingBag, color: "#8B5CF6", href: "/products" },
   { name: "Users", icon: Users, color: "#EC4899", href: "/users" },
@@ -29,6 +29,22 @@ const SIDEBAR_ITEMS = [
 
 const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const navigate = useNavigate(); // Để điều hướng người dùng
+
+  // Kiểm tra token khi trang tải lại
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken"); // Hoặc sessionStorage nếu bạn lưu ở đó
+    if (!token) {
+      navigate("/login"); // Điều hướng về trang đăng nhập nếu không có token
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    // Xóa accessToken khỏi localStorage hoặc sessionStorage
+    localStorage.removeItem("accessToken"); // Hoặc dùng sessionStorage.removeItem nếu bạn lưu ở đó
+    navigate("/login"); // Điều hướng về trang login hoặc trang khác theo nhu cầu
+    window.location.reload();
+  };
 
   return (
     <motion.div
@@ -71,6 +87,14 @@ const Sidebar = () => {
               </motion.div>
             </Link>
           ))}
+
+          {/* Nút Logout */}
+          <button
+            onClick={handleLogout}
+            className="mt-4 p-4 w-full text-left text-sm font-medium text-red-500 hover:bg-gray-700 transition-colors rounded-lg"
+          >
+            Logout
+          </button>
         </nav>
       </div>
     </motion.div>

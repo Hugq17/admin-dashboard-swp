@@ -58,7 +58,7 @@ const Login = ({ updateStatus }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600">
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-sm w-full">
         <h1 className="text-3xl font-semibold text-gray-800 text-center mb-6">
           Đăng nhập
