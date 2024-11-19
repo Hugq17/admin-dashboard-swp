@@ -1,51 +1,45 @@
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate, useLocation } from "react-router-dom";
 import OverviewPage from "./pages/OverviewPage";
 import ProductsPage from "./pages/ProductsPage";
 import Sidebar from "./components/Sidebar";
 import SettingsPage from "./pages/SettingsPage";
-import Login from "./pages/Login";
-import { useState } from "react";
+import Login from "./pages/Login/Login";
+import { useState, useEffect } from "react";
 
 function PrivateRoute({ isLoggedIn, children }) {
-  return isLoggedIn ? children : <Navigate to="/login" />;
+  const location = useLocation();
+  return isLoggedIn ? (
+    children
+  ) : (
+    <Navigate to="/login" replace state={{ from: location }} />
+  );
 }
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  // Boolean(localStorage.getItem("authToken"))
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    setIsLoggedIn(Boolean(token));
+  }, []);
 
   const updateStatus = () => {
-    setIsLoggedIn((prev) => !prev);
+    const token = localStorage.getItem("authToken");
+    setIsLoggedIn(Boolean(token));
+  };
+
+  const logout = () => {
+    localStorage.removeItem("authToken");
+    setIsLoggedIn(false);
   };
 
   return (
-    <div className="flex h-screen bg-gray-900 text-gray-100 overflow-hidden">
-      {isLoggedIn && <Sidebar />}
+    <div className="">
+      {/* {isLoggedIn && <Sidebar logout={logout} />} */}
       <Routes>
         <Route path="/login" element={<Login updateStatus={updateStatus} />} />
-        <Route
-          path="/"
-          element={
-            <PrivateRoute isLoggedIn={isLoggedIn}>
-              <OverviewPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/products"
-          element={
-            <PrivateRoute isLoggedIn={isLoggedIn}>
-              <ProductsPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <PrivateRoute isLoggedIn={isLoggedIn}>
-              <SettingsPage />
-            </PrivateRoute>
-          }
-        />
+        <Route path="/dashboard" element={<OverviewPage />} />
       </Routes>
     </div>
   );
