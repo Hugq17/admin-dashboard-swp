@@ -7,6 +7,8 @@ import {
   ShoppingCart,
   TrendingUp,
   Users,
+  House,
+  Newspaper
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -15,12 +17,12 @@ import { Link, useNavigate } from "react-router-dom";
 const SIDEBAR_ITEMS = [
   {
     name: "Trang chủ",
-    icon: BarChart2,
-    color: "#6366f1",
+    icon: House,
+    color: "#DEAA79",
     href: "/trangchu",
   },
-  { name: "Products", icon: ShoppingBag, color: "#8B5CF6", href: "/products" },
-  { name: "Users", icon: Users, color: "#EC4899", href: "/users" },
+  { name: "Bài viết", icon: Newspaper, color: "#10B981", href: "/baiviet" },
+  { name: "Người dùng", icon: Users, color: "#80C4E9", href: "/nguoidung" },
   { name: "Sales", icon: DollarSign, color: "#10B981", href: "/sales" },
   { name: "Orders", icon: ShoppingCart, color: "#F59E0B", href: "/orders" },
   { name: "Analytics", icon: TrendingUp, color: "#3B82F6", href: "/analytics" },

@@ -10,10 +10,11 @@ import {
   Ticket,
   CalendarDays,
 } from "lucide-react";
-import SalesOverviewChart from "../../components/overview/SalesOverviewChart";
-import CategoryDistributionChart from "../../components/overview/CategoryDistributionChart";
-import SalesChannelChart from "../../components/overview/SalesChannelChart";
+import EventStatics from "../../components/Chart/EventStatics";
+import CategoryDistributionChart from "../../components/Chart/CategoryDistributionChart";
+import SalesChannelChart from "../../components/Chart/SalesChannelChart";
 import Header from "../../components/common/Header";
+import BlogStatics from "../../components/Chart/BlogStatics";
 
 const OverviewPage = () => {
   const [stats, setStats] = useState([]);
@@ -56,12 +57,11 @@ const OverviewPage = () => {
               let color;
               let name;
 
-              // Đặt tên tiếng Việt và xác định màu sắc và biểu tượng dựa trên entity_type
               switch (stat.entity_type) {
                 case "Account":
-                  name = "Tài khoản";
+                  name = "Người dùng";
                   icon = Users;
-                  color = "#6366f1"; // xanh dương
+                  color = "#80C4E9"; // xanh dương
                   break;
                 case "Schedule":
                   name = "Lịch hẹn";
@@ -100,8 +100,9 @@ const OverviewPage = () => {
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <SalesOverviewChart />
-          <CategoryDistributionChart />
+          <EventStatics />
+          <BlogStatics />
+          {/* <CategoryDistributionChart /> */}
           <SalesChannelChart />
         </div>
       </main>

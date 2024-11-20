@@ -72,7 +72,7 @@ const Login = ({ updateStatus }) => {
               value={email}
               placeholder="Enter your username"
               onChange={handleInputChangeEmail}
-              className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none text-black"
             />
           </div>
           <div className="relative">
@@ -85,12 +85,12 @@ const Login = ({ updateStatus }) => {
                 value={password}
                 type={showPassword ? "text" : "password"}
                 onChange={handleInputChangePassword}
-                className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none pr-10"
+                className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none pr-10 text-black"
               />
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
-                className="absolute right-0 mr-3 flex items-center justify-center text-gray-600 hover:text-gray-800 h-full focus:outline-none"
+                className="absolute right-0 mr-3 flex items-center justify-center text-gray-600 hover:text-gray-800 h-full focus:outline-none "
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
