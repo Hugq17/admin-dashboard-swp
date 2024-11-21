@@ -76,12 +76,16 @@ const BlogsTable = () => {
                 </td>
                 <td className="px-6 py-4">{blog.title}</td>
                 <td className="px-6 py-4">{blog.user_name}</td>
-                <td
-                  className="px-6 py-4 max-w-xs truncate"
-                  title={blog.content}
-                >
-                  {blog.content}
+                <td className="px-6 py-4 max-w-xs relative group">
+                  {/* Phần mô tả mặc định */}
+                  <div className="truncate">{blog.content}</div>
+
+                  {/* Hiển thị nội dung đầy đủ khi hover */}
+                  <div className="absolute hidden group-hover:flex bg-gray-800 text-white text-sm rounded-lg shadow-md px-4 py-2 z-10 w-max max-w-xs">
+                    {blog.content}
+                  </div>
                 </td>
+
                 <td className="px-6 py-4 text-center">{blog.likes_count}</td>
                 <td className="px-6 py-4 text-center">{blog.comments_count}</td>
               </tr>
