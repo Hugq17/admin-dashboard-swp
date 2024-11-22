@@ -30,7 +30,7 @@ const SIDEBAR_ITEMS = [
     color: "#F59E0B",
     href: "/sothich",
   },
-  { name: "Settings", icon: Settings, color: "#6EE7B7", href: "/settings" },
+  // { name: "Settings", icon: Settings, color: "#6EE7B7", href: "/settings" },
 ];
 
 const Sidebar = () => {
