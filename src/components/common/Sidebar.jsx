@@ -1,14 +1,11 @@
 import {
-  BarChart2,
-  DollarSign,
   Menu,
-  Settings,
-  ShoppingBag,
-  ShoppingCart,
-  TrendingUp,
   Users,
   House,
   Newspaper,
+  UserCog,
+  Ticket,
+  MessageSquareHeart,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -18,19 +15,19 @@ const SIDEBAR_ITEMS = [
   {
     name: "Trang chủ",
     icon: House,
-    color: "#DEAA79",
+    color: "#F59E0B",
     href: "/trangchu",
   },
-  { name: "Bài viết", icon: Newspaper, color: "#10B981", href: "/baiviet" },
-  { name: "Người dùng", icon: Users, color: "#80C4E9", href: "/nguoidung" },
-  { name: "Workshop", icon: DollarSign, color: "#10B981", href: "/workshop" },
+  { name: "Bài viết", icon: Newspaper, color: "#34D399", href: "/baiviet" },
+  { name: "Người dùng", icon: Users, color: "#3B82F6", href: "/nguoidung" },
+  { name: "Workshop", icon: Ticket, color: "#F472B6", href: "/workshop" },
   {
     name: "Chủ đề sở thích",
-    icon: ShoppingCart,
-    color: "#F59E0B",
+    icon: MessageSquareHeart,
+    color: "#F97316",
     href: "/sothich",
   },
-  // { name: "Settings", icon: Settings, color: "#6EE7B7", href: "/settings" },
+  { name: "Admin", icon: UserCog, color: "#10B981", href: "/admin" },
 ];
 
 const Sidebar = () => {

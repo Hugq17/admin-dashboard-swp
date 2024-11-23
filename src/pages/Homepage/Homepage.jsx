@@ -3,8 +3,6 @@ import { motion } from "framer-motion";
 import StatCard from "../../components/common/StatCard";
 import { Users, Newspaper, Ticket, CalendarDays } from "lucide-react";
 import EventStatics from "../../components/Chart/EventStatics";
-import CategoryDistributionChart from "../../components/Chart/CategoryDistributionChart";
-import SalesChannelChart from "../../components/Chart/SalesChannelChart";
 import Header from "../../components/common/Header";
 import BlogStatics from "../../components/Chart/BlogStatics";
 

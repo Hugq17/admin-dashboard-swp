@@ -44,13 +44,16 @@ const Login = ({ updateStatus }) => {
 
       const data = await response.json();
 
-      // Giả sử accessToken nằm trong data.accessToken, hãy lưu nó vào localStorage
-      if (data && data.accessToken) {
+      // Kiểm tra xem có accessToken và user_id trong data hay không
+      if (data && data.accessToken && data.user_id) {
+        // Lưu accessToken và user_id vào localStorage
         localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("user_id", data.user_id);
+
         updateStatus();
         navigate("/dashboard");
       } else {
-        console.error("No access token received");
+        console.error("No access token or user_id received");
       }
     } catch (error) {
       console.error("Error during login:", error);

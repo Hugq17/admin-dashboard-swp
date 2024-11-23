@@ -7,6 +7,7 @@ import Blog from "./pages/Blog/Blog";
 import Sidebar from "./components/common/Sidebar";
 import Interest from "./pages/Interest/Interest";
 import Workshop from "./pages/Workshop/Workshop";
+import AdminInfo from "./pages/Admin/AdminInfo";
 
 function PrivateRoute({ isLoggedIn, children }) {
   const location = useLocation();
@@ -86,6 +87,14 @@ function App() {
           element={
             <PrivateRoute isLoggedIn={isLoggedIn}>
               <Workshop />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <PrivateRoute isLoggedIn={isLoggedIn}>
+              <AdminInfo />
             </PrivateRoute>
           }
         />
