@@ -2,23 +2,24 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import SearchBar from "./SearchBar";
 import Pagination from "./Pagination";
+import CreateBlogButton from "./CreateBlogButton";
 
 const BlogsTable = () => {
-  const [blogs, setBlogs] = useState([]); // All blogs from the API
-  const [filteredBlogs, setFilteredBlogs] = useState([]); // Filtered blogs based on search
-  const [searchQuery, setSearchQuery] = useState(""); // Search query
-  const [currentPage, setCurrentPage] = useState(1); // Current page for pagination
-  const [blogsPerPage] = useState(5); // Number of blogs per page
+  const [blogs, setBlogs] = useState([]);
+  const [filteredBlogs, setFilteredBlogs] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [blogsPerPage] = useState(5);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
 
-  // Fetch blogs from the API
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
         const response = await axios.get(
           "https://sharingcafe-be.onrender.com/api/blog"
         );
-        setBlogs(response.data); // Set blogs in state
-        setFilteredBlogs(response.data); // Initialize filtered blogs as the full list initially
+        setBlogs(response.data);
+        setFilteredBlogs(response.data);
       } catch (error) {
         console.error("Error fetching blogs:", error);
       }
@@ -27,7 +28,6 @@ const BlogsTable = () => {
     fetchBlogs();
   }, []);
 
-  // Filter blogs when search query or blogs list changes
   useEffect(() => {
     const filtered = blogs.filter(
       (blog) =>
@@ -37,17 +37,50 @@ const BlogsTable = () => {
     setFilteredBlogs(filtered);
   }, [searchQuery, blogs]);
 
-  // Get current blogs based on pagination
   const indexOfLastBlog = currentPage * blogsPerPage;
   const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
   const currentBlogs = filteredBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
 
-  // Handle pagination
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Open or close modal
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
 
   return (
     <div className="container mx-auto p-6">
-      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg w-11/12 md:w-2/3 lg:w-1/2 p-8 relative">
+            {/* Close Button */}
+            <button
+              onClick={toggleModal}
+              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
+            >
+              &times;
+            </button>
+            {/* Content inside Modal */}
+            <CreateBlogButton />
+          </div>
+        </div>
+      )}
+
+      <div className="flex justify-between items-center">
+        {/* Search Bar */}
+        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        {/* Button to open Modal */}
+        <div className="mb-6 text-center">
+          <button
+            onClick={toggleModal}
+            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+          >
+            Tạo Blog
+          </button>
+        </div>
+      </div>
+      {/* Table */}
       <div className="overflow-x-auto bg-white rounded-lg shadow-md">
         <table className="min-w-full table-auto">
           <thead className="bg-gray-100 text-gray-600">
@@ -57,7 +90,7 @@ const BlogsTable = () => {
               <th className="px-6 py-4 text-left">Tiêu đề</th>
               <th className="px-6 py-4 text-left">Tác giả</th>
               <th className="px-6 py-4 text-left">Nội dung</th>
-              <th className="px-6 py-4 text-center">Lượt thích</th>
+              <th className="px-6 py-4 text-center">Chủ đề</th>
               <th className="px-6 py-4 text-center">Lượt bình luận</th>
             </tr>
           </thead>
@@ -77,22 +110,20 @@ const BlogsTable = () => {
                 <td className="px-6 py-4">{blog.title}</td>
                 <td className="px-6 py-4">{blog.user_name}</td>
                 <td className="px-6 py-4 max-w-xs relative group">
-                  {/* Phần mô tả mặc định */}
                   <div className="truncate">{blog.content}</div>
-
-                  {/* Hiển thị nội dung đầy đủ khi hover */}
                   <div className="absolute hidden group-hover:flex bg-gray-800 text-white text-sm rounded-lg shadow-md px-4 py-2 z-10 w-max max-w-xs">
                     {blog.content}
                   </div>
                 </td>
-
-                <td className="px-6 py-4 text-center">{blog.likes_count}</td>
+                <td className="px-6 py-4 text-center">{blog.interest_name}</td>
                 <td className="px-6 py-4 text-center">{blog.comments_count}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
       <Pagination
         totalItems={filteredBlogs.length}
         itemsPerPage={blogsPerPage}
