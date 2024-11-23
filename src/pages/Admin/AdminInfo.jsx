@@ -76,30 +76,34 @@ const AdminInfo = () => {
               <p className="text-gray-600">{adminData.email}</p>
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-700">Phone:</h2>
+              <h2 className="text-lg font-semibold text-gray-700">SĐT:</h2>
               <p className="text-gray-600">{adminData.phone}</p>
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-700">Story:</h2>
+              <h2 className="text-lg font-semibold text-gray-700">
+                Câu chuyện:
+              </h2>
               <p className="text-gray-600">{adminData.story}</p>
             </div>
 
             <div>
               <h2 className="text-lg font-semibold text-gray-700">
-                Favorite Location:
+                Địa điểm yêu thích:
               </h2>
               <p className="text-gray-600">{adminData.favorite_location}</p>
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-700">Address:</h2>
+              <h2 className="text-lg font-semibold text-gray-700">Địa chỉ:</h2>
               <p className="text-gray-600">{adminData.address}</p>
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-700">
-                Date of Birth:
+                Ngày sinh:
               </h2>
               <p className="text-gray-600">
-                {new Date(adminData.dob).toLocaleDateString()}
+                {new Date(adminData.dob)
+                  .toLocaleDateString("en-GB")
+                  .replace(/(\d{1,2})\/(\d{1,2})\/(\d{4})/, "$1/$2/$3")}
               </p>
             </div>
           </div>

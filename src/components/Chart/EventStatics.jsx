@@ -15,6 +15,7 @@ const EventStatics = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [years, setYears] = useState([]);
   const [selectedYear, setSelectedYear] = useState("");
+  const [averageLineData, setAverageLineData] = useState([]);
 
   useEffect(() => {
     // Fetch data from the API
@@ -25,22 +26,33 @@ const EventStatics = () => {
         );
         const data = await response.json();
 
-        // Chuyển event_year thành số và format dữ liệu
+        // Format data
         const formattedData = data.map((item) => ({
           name: `${item.event_month}/${item.event_year}`,
-          events: Math.max(0, Math.round(parseFloat(item.event_count))) || 0, // Làm tròn và loại bỏ số âm
-          year: parseInt(item.event_year, 10), // Parse năm thành số
+          events: Math.max(0, Math.round(parseFloat(item.event_count))) || 0,
+          year: parseInt(item.event_year, 10),
         }));
 
-        // Lấy các năm duy nhất
+        // Get unique years
         const uniqueYears = [
           ...new Set(formattedData.map((item) => item.year)),
         ];
         setYears(uniqueYears);
 
-        // Cập nhật dữ liệu
+        // Compute yearly average and round it to an integer
+        const averages = uniqueYears.map((year) => {
+          const yearData = formattedData.filter((item) => item.year === year);
+          const totalEvents = yearData.reduce(
+            (sum, item) => sum + item.events,
+            0
+          );
+          const average = Math.floor(totalEvents / 12); // Round down to the nearest integer
+          return { year, average };
+        });
+
         setChartData(formattedData);
-        setFilteredData(formattedData); // Mặc định hiển thị tất cả dữ liệu
+        setFilteredData(formattedData);
+        setAverageLineData(averages);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -49,15 +61,18 @@ const EventStatics = () => {
     fetchData();
   }, []);
 
-  // Lọc dữ liệu theo năm đã chọn
+  // Handle year change
   const handleYearChange = (event) => {
-    const year = parseInt(event.target.value, 10); // Chuyển giá trị năm thành số
+    const year = parseInt(event.target.value, 10);
     setSelectedYear(year);
 
-    // Lọc dữ liệu theo năm đã chọn
     const filtered = chartData.filter((item) => item.year === year);
     setFilteredData(filtered);
   };
+
+  // Get the average value for the selected year
+  const averageValue =
+    averageLineData.find((avg) => avg.year === selectedYear)?.average || 0;
 
   return (
     <motion.div
@@ -67,10 +82,10 @@ const EventStatics = () => {
       transition={{ delay: 0.2 }}
     >
       <h2 className="text-lg font-medium mb-4 text-gray-100">
-        Sự kiện theo năm
+        Số bài viết theo năm
       </h2>
 
-      {/* Dropdown để chọn năm */}
+      {/* Dropdown */}
       <div className="mb-4">
         <select
           className="bg-gray-700 text-gray-100 p-2 rounded-lg"
@@ -90,11 +105,10 @@ const EventStatics = () => {
         <ResponsiveContainer width={"100%"} height={"100%"}>
           <LineChart data={filteredData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#4B5563" />
-            {/* Trục X với labelFormatter để chỉ hiển thị số nguyên */}
             <XAxis
               dataKey={"name"}
               stroke="#9ca3af"
-              tickFormatter={(value) => value.split("/")[0]} // Hiển thị chỉ tháng
+              tickFormatter={(value) => value.split("/")[0]}
             />
             <YAxis stroke="#9ca3af" />
             <Tooltip
@@ -105,21 +119,38 @@ const EventStatics = () => {
               itemStyle={{ color: "#E5E7EB" }}
               labelFormatter={(value) => `Tháng: ${value}`}
               formatter={(value, name) => {
-                if (name === "events") {
-                  return ["Sự Kiện", value]; // Hiển thị số nguyên
+                if (name === "Events") {
+                  return [value, "Số bài viết"];
                 }
-                return [name, value];
+                // Thêm điều kiện này để hiển thị Trung bình
+                if (name === "averageLine") {
+                  return [averageValue, "Trung bình"];
+                }
+                return [value, name];
               }}
             />
-            {/* Dữ liệu thực tế */}
+
+            {/* Blogs Data */}
             <Line
               type="monotone"
-              dataKey="events" // "events" cho dữ liệu thực tế
+              dataKey="events"
               stroke="#6366F1"
               strokeWidth={3}
               dot={{ fill: "#6366F1", strokeWidth: 2, r: 6 }}
               activeDot={{ r: 8, strokeWidth: 2 }}
             />
+            {/* Average Line */}
+            {selectedYear && (
+              <Line
+                type="monotone"
+                dataKey={() => averageValue}
+                stroke="#EF4444"
+                strokeWidth={2}
+                strokeDasharray="5 5"
+                dot={false}
+                name="averageLine" // Gán tên cho đường trung bình
+              />
+            )}
           </LineChart>
         </ResponsiveContainer>
       </div>
