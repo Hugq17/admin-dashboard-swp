@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import SearchBar from "./SearchBar";
 import Pagination from "./Pagination";
+import CreateEventButton from "./CreateEventButton";
 
 const EventsTable = () => {
   const [events, setEvents] = useState([]); // All events from the API
@@ -9,7 +10,11 @@ const EventsTable = () => {
   const [searchQuery, setSearchQuery] = useState(""); // Search query
   const [currentPage, setCurrentPage] = useState(1); // Current page for pagination
   const [eventsPerPage] = useState(5); // Number of events per page
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
 
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
   // Fetch events from the API
   useEffect(() => {
     const fetchEvents = async () => {
@@ -50,7 +55,31 @@ const EventsTable = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg w-11/12 md:w-2/3 lg:w-1/2 p-8 relative">
+            {/* Close Button */}
+            <button
+              onClick={toggleModal}
+              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
+            >
+              &times;
+            </button>
+            {/* Content inside Modal */}
+            <CreateEventButton />
+          </div>
+        </div>
+      )}
+      <div className="flex justify-between items-center">
+        {/* Search Bar */}
+        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <button
+          onClick={toggleModal}
+          className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+        >
+          Tạo Workshop
+        </button>
+      </div>
       <div className="overflow-x-auto bg-white rounded-lg shadow-md">
         <table className="min-w-full table-auto">
           <thead className="bg-gray-100 text-gray-600">
