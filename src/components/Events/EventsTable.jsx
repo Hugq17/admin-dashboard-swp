@@ -3,6 +3,9 @@ import axios from "axios";
 import SearchBar from "./SearchBar";
 import Pagination from "./Pagination";
 import CreateEventButton from "./CreateEventButton";
+import { motion } from "framer-motion";
+import StatCard from "../../components/common/StatCard";
+import { BookOpen, BookOpenCheck } from "lucide-react";
 
 const EventsTable = () => {
   const [events, setEvents] = useState([]); // All events from the API
@@ -11,6 +14,17 @@ const EventsTable = () => {
   const [currentPage, setCurrentPage] = useState(1); // Current page for pagination
   const [eventsPerPage] = useState(5); // Number of events per page
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const [todayEventsCount, setTodayEventsCount] = useState(0); // State for today's blogs count
+
+  const getTodayDate = () => {
+    const now = new Date();
+    const startOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+    return startOfToday.toISOString(); // Trả về định dạng ISO để so sánh
+  };
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -24,6 +38,12 @@ const EventsTable = () => {
         );
         setEvents(response.data); // Set events in state
         setFilteredEvents(response.data); // Initialize filtered events as the full list initially
+
+        const todayDate = getTodayDate();
+        const todayEvents = response.data.filter(
+          (event) => new Date(event.created_at) >= new Date(todayDate)
+        );
+        setTodayEventsCount(todayEvents.length);
       } catch (error) {
         console.error("Error fetching events:", error);
       }
@@ -70,6 +90,25 @@ const EventsTable = () => {
           </div>
         </div>
       )}
+      <motion.div
+        className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+      >
+        <StatCard
+          name="Tổng workshop"
+          icon={BookOpen}
+          value={events.length}
+          color="#6366F1"
+        />
+        <StatCard
+          name="Workshop mới hôm nay"
+          icon={BookOpenCheck}
+          value={todayEventsCount}
+          color="#10B981"
+        />
+      </motion.div>
       <div className="flex justify-between items-center">
         {/* Search Bar */}
         <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
