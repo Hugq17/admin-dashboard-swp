@@ -3,8 +3,11 @@ import { motion } from "framer-motion";
 import StatCard from "../../components/common/StatCard";
 import { Users, Newspaper, Ticket, CalendarDays } from "lucide-react";
 import EventStatics from "../../components/Chart/EventStatics";
+import SalesChannelChart from "../../components/Chart/SalesChannelChart"
+import CategoryDistributionChart from "../../components/Chart/GenderDistributionChart"
 import Header from "../../components/common/Header";
 import BlogStatics from "../../components/Chart/BlogStatics";
+import CategoryInterestsChart from "../../components/Chart/CategoryInterestsChart";
 
 const OverviewPage = () => {
   const [stats, setStats] = useState([]);
@@ -92,8 +95,9 @@ const OverviewPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <EventStatics />
           <BlogStatics />
-          {/* <CategoryDistributionChart /> */}
-          {/* <SalesChannelChart /> */}
+          <CategoryDistributionChart />
+          <CategoryInterestsChart />
+          <SalesChannelChart />
         </div>
       </main>
     </div>

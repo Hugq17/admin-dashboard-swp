@@ -82,7 +82,7 @@ const EventStatics = () => {
       transition={{ delay: 0.2 }}
     >
       <h2 className="text-lg font-medium mb-4 text-gray-100">
-        Số bài viết theo năm
+        Số Workshop theo năm
       </h2>
 
       {/* Dropdown */}

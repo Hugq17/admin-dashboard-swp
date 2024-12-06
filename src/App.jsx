@@ -38,7 +38,7 @@ function App() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-900 text-gray-100">
+    <div className="flex h-screen bg-gradient-to-b from-pink-400 to-blue-400 text-gray-100">
       {isLoggedIn && <Sidebar logout={logout} />}
       <Routes>
         <Route path="/login" element={<Login updateStatus={updateStatus} />} />
