@@ -3,7 +3,6 @@ import axios from "axios";
 
 const CreateEventButton = () => {
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [location, setLocation] = useState("");
   const [timeOfEvent, setTimeOfEvent] = useState("");
@@ -62,7 +61,6 @@ const CreateEventButton = () => {
     e.preventDefault();
 
     if (
-      !content ||
       !title ||
       !interestId ||
       !imageFile ||
@@ -83,7 +81,6 @@ const CreateEventButton = () => {
       const eventData = {
         organizer_id: userId,
         interest_id: interestId,
-        content,
         title,
         background_img: backgroundImg,
         location,
@@ -101,7 +98,6 @@ const CreateEventButton = () => {
       alert("Event đã được tạo thành công!");
 
       // Reset form
-      setContent("");
       setTitle("");
       setImageFile(null);
       setLocation("");
@@ -163,22 +159,7 @@ const CreateEventButton = () => {
           </select>
         </div>
 
-        <div className="mb-4">
-          <label
-            htmlFor="content"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Nội dung
-          </label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md"
-            rows="4"
-          ></textarea>
-        </div>
+      
 
         <div className="mb-4">
           <label

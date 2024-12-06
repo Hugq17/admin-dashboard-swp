@@ -19,7 +19,7 @@ const SIDEBAR_ITEMS = [
     href: "/trangchu",
   },
   { name: "Bài viết", icon: Newspaper, color: "#34D399", href: "/baiviet" },
-  { name: "Người dùng", icon: Users, color: "#3B82F6", href: "/nguoidung" },
+  { name: "Tài khoản", icon: Users, color: "#3B82F6", href: "/taikhoan" },
   { name: "Workshop", icon: Ticket, color: "#F472B6", href: "/workshop" },
   {
     name: "Chủ đề sở thích",

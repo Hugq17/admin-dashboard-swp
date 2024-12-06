@@ -67,7 +67,7 @@ function App() {
           }
         />
         <Route
-          path="/nguoidung"
+          path="/taikhoan"
           element={
             <PrivateRoute isLoggedIn={isLoggedIn}>
               <User />
