@@ -21,7 +21,11 @@ const UsersTable = () => {
 
   const getTodayDate = () => {
     const now = new Date();
-    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
     return startOfToday.toISOString();
   };
 
@@ -79,8 +83,18 @@ const UsersTable = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
       >
-        <StatCard name="Tổng số người dùng" icon={Users} value={totalUsersCount} color="#6366F1" />
-        <StatCard name="Người dùng mới hôm nay" icon={BookOpen} value={todayUsersCount} color="#10B981" />
+        <StatCard
+          name="Tổng số người dùng"
+          icon={Users}
+          value={totalUsersCount}
+          color="#6366F1"
+        />
+        <StatCard
+          name="Người dùng mới hôm nay"
+          icon={BookOpen}
+          value={todayUsersCount}
+          color="#10B981"
+        />
       </motion.div>
 
       <div className="flex justify-between items-center mb-4">
@@ -106,7 +120,7 @@ const UsersTable = () => {
                   <img
                     src={user.profile_avatar}
                     alt={user.user_name}
-                    className="w-16 h-16 object-cover rounded-full mx-auto"
+                    className="w-12 h-12 object-cover rounded-md"
                   />
                 </td>
                 <td className="px-6 py-4">{user.user_name}</td>

@@ -6,6 +6,7 @@ import CreateBlogButton from "./CreateBlogButton";
 import StatCard from "../../components/common/StatCard";
 import { BookOpen, BookOpenCheck } from "lucide-react";
 import { motion } from "framer-motion";
+import { ChevronUp, ChevronDown } from "lucide-react";
 
 const BlogsTable = () => {
   const [blogs, setBlogs] = useState([]);
@@ -103,7 +104,7 @@ const BlogsTable = () => {
         className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
+        transition={{ duration: 0.5 }}
       >
         <StatCard
           name="Tổng bài viết"
@@ -134,11 +135,14 @@ const BlogsTable = () => {
       <div className="overflow-x-auto bg-white rounded-lg shadow-md">
         <table className="min-w-full table-auto">
           <thead className="bg-gray-100 text-gray-600">
-            <tr>
+            <tr className="border-b hover:bg-gray-100 transition duration-300 ease-in-out">
               <th className="px-6 py-4 text-center flex items-center justify-center">
                 Ngày tạo
-                <button onClick={sortBlogs}>
-                  {sortOrder === "asc" ? " ▲" : " ▼"}
+                <button
+                  onClick={sortBlogs}
+                  className="ml-2 text-gray-500 hover:text-gray-700 flex items-center space-x-1"
+                >
+                  <span>{sortOrder === "asc" ? " ▲" : " ▼"}</span>
                 </button>
               </th>
               <th className="px-6 py-4 text-center">Hình ảnh</th>
@@ -152,15 +156,25 @@ const BlogsTable = () => {
 
           <tbody className="text-gray-700">
             {currentBlogs.map((blog) => (
-              <tr key={blog.blog_id} className="border-b hover:bg-gray-50">
+              <tr
+                key={blog.blog_id}
+                className="border-b hover:bg-gray-100 transition duration-300 ease-in-out"
+              >
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  {new Date(blog.created_at).toLocaleDateString("vi-VN")}
+                  {new Date(blog.created_at).toLocaleString("vi-VN", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </td>
+
                 <td className="px-6 py-4 text-center">
                   <img
                     src={blog.image}
                     alt={blog.title}
-                    className="w-16 h-16 object-cover rounded-full mx-auto"
+                    className="w-12 h-12 object-cover rounded-md"
                   />
                 </td>
                 <td className="px-6 py-4">{blog.title}</td>

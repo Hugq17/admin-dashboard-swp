@@ -153,7 +153,7 @@ const EventsTable = () => {
                   <img
                     src={event.background_img}
                     alt={event.title}
-                    className="w-16 h-16 object-cover rounded-full mx-auto"
+                    className="w-12 h-12 object-cover rounded-md"
                   />
                 </td>
                 <td className="px-6 py-4">{event.title}</td>
