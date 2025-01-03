@@ -13,9 +13,12 @@ const BlogsTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [blogsPerPage] = useState(5);
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
-  const [todayBlogsCount, setTodayBlogsCount] = useState(0); // State for today's blogs count
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [todayBlogsCount, setTodayBlogsCount] = useState(0);
+  const [sortOrder, setSortOrder] = useState("asc"); // Trạng thái sắp xếp
+
   const totalBlogsCount = blogs.length;
+
   // Lấy ngày hiện tại
   const getTodayDate = () => {
     const now = new Date();
@@ -24,7 +27,7 @@ const BlogsTable = () => {
       now.getMonth(),
       now.getDate()
     );
-    return startOfToday.toISOString(); // Trả về định dạng ISO để so sánh
+    return startOfToday.toISOString();
   };
 
   useEffect(() => {
@@ -59,13 +62,23 @@ const BlogsTable = () => {
     setFilteredBlogs(filtered);
   }, [searchQuery, blogs]);
 
+  // Hàm sắp xếp
+  const sortBlogs = () => {
+    const sortedBlogs = [...filteredBlogs].sort((a, b) => {
+      const dateA = new Date(a.created_at);
+      const dateB = new Date(b.created_at);
+      return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+    });
+    setFilteredBlogs(sortedBlogs);
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  };
+
   const indexOfLastBlog = currentPage * blogsPerPage;
   const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
   const currentBlogs = filteredBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // Open or close modal
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
@@ -76,14 +89,12 @@ const BlogsTable = () => {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-lg w-11/12 md:w-2/3 lg:w-1/2 p-8 relative">
-            {/* Close Button */}
             <button
               onClick={toggleModal}
               className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
             >
               &times;
             </button>
-            {/* Content inside Modal */}
             <CreateBlogButton />
           </div>
         </div>
@@ -108,22 +119,28 @@ const BlogsTable = () => {
         />
       </motion.div>
 
-      <div className="flex justify-between items-center">
-        {/* Search Bar */}
+      <div className="flex justify-between items-center mb-4">
         <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-        <button
-          onClick={toggleModal}
-          className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-        >
-          Tạo Blog
-        </button>
+        <div className="flex gap-4">
+          <button
+            onClick={toggleModal}
+            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+          >
+            Tạo Blog
+          </button>
+        </div>
       </div>
-      {/* Table */}
+
       <div className="overflow-x-auto bg-white rounded-lg shadow-md">
         <table className="min-w-full table-auto">
           <thead className="bg-gray-100 text-gray-600">
             <tr>
-              <th className="px-6 py-4 text-center">Ngày tạo</th>
+              <th className="px-6 py-4 text-center flex items-center justify-center">
+                Ngày tạo
+                <button onClick={sortBlogs}>
+                  {sortOrder === "asc" ? " ▲" : " ▼"}
+                </button>
+              </th>
               <th className="px-6 py-4 text-center">Hình ảnh</th>
               <th className="px-6 py-4 text-left">Tiêu đề</th>
               <th className="px-6 py-4 text-left">Tác giả</th>
@@ -132,6 +149,7 @@ const BlogsTable = () => {
               <th className="px-6 py-4 text-center">Lượt bình luận</th>
             </tr>
           </thead>
+
           <tbody className="text-gray-700">
             {currentBlogs.map((blog) => (
               <tr key={blog.blog_id} className="border-b hover:bg-gray-50">
@@ -161,7 +179,6 @@ const BlogsTable = () => {
         </table>
       </div>
 
-      {/* Pagination */}
       <Pagination
         totalItems={filteredBlogs.length}
         itemsPerPage={blogsPerPage}

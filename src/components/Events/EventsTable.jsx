@@ -8,13 +8,14 @@ import StatCard from "../../components/common/StatCard";
 import { BookOpen, BookOpenCheck } from "lucide-react";
 
 const EventsTable = () => {
-  const [events, setEvents] = useState([]); // All events from the API
-  const [filteredEvents, setFilteredEvents] = useState([]); // Filtered events based on search
-  const [searchQuery, setSearchQuery] = useState(""); // Search query
-  const [currentPage, setCurrentPage] = useState(1); // Current page for pagination
-  const [eventsPerPage] = useState(5); // Number of events per page
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
-  const [todayEventsCount, setTodayEventsCount] = useState(0); // State for today's blogs count
+  const [events, setEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [eventsPerPage] = useState(5);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [todayEventsCount, setTodayEventsCount] = useState(0);
+  const [sortOrder, setSortOrder] = useState("asc"); // Thứ tự sắp xếp
 
   const getTodayDate = () => {
     const now = new Date();
@@ -23,21 +24,21 @@ const EventsTable = () => {
       now.getMonth(),
       now.getDate()
     );
-    return startOfToday.toISOString(); // Trả về định dạng ISO để so sánh
+    return startOfToday.toISOString();
   };
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
-  // Fetch events from the API
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const response = await axios.get(
           "https://sharingcafe-be.onrender.com/api/event"
         );
-        setEvents(response.data); // Set events in state
-        setFilteredEvents(response.data); // Initialize filtered events as the full list initially
+        setEvents(response.data);
+        setFilteredEvents(response.data);
 
         const todayDate = getTodayDate();
         const todayEvents = response.data.filter(
@@ -52,7 +53,6 @@ const EventsTable = () => {
     fetchEvents();
   }, []);
 
-  // Filter events when search query or events list changes
   useEffect(() => {
     const filtered = events.filter(
       (event) =>
@@ -62,7 +62,16 @@ const EventsTable = () => {
     setFilteredEvents(filtered);
   }, [searchQuery, events]);
 
-  // Get current events based on pagination
+  const sortEventsByDate = () => {
+    const sorted = [...filteredEvents].sort((a, b) => {
+      const dateA = new Date(a.time_of_event);
+      const dateB = new Date(b.time_of_event);
+      return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+    });
+    setFilteredEvents(sorted);
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  };
+
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
   const currentEvents = filteredEvents.slice(
@@ -70,7 +79,6 @@ const EventsTable = () => {
     indexOfLastEvent
   );
 
-  // Handle pagination
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
@@ -78,14 +86,12 @@ const EventsTable = () => {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-lg w-11/12 md:w-2/3 lg:w-1/2 p-8 relative">
-            {/* Close Button */}
             <button
               onClick={toggleModal}
               className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
             >
               &times;
             </button>
-            {/* Content inside Modal */}
             <CreateEventButton />
           </div>
         </div>
@@ -110,7 +116,6 @@ const EventsTable = () => {
         />
       </motion.div>
       <div className="flex justify-between items-center">
-        {/* Search Bar */}
         <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         <button
           onClick={toggleModal}
@@ -123,7 +128,13 @@ const EventsTable = () => {
         <table className="min-w-full table-auto">
           <thead className="bg-gray-100 text-gray-600">
             <tr>
-              <th className="px-6 py-4 text-center">Ngày tổ chức</th>
+              <th
+                className="px-6 py-4 text-center cursor-pointer"
+                onClick={sortEventsByDate}
+              >
+                Ngày tổ chức
+                {sortOrder === "asc" ? " ▲" : " ▼"}
+              </th>
               <th className="px-6 py-4 text-center">Hình ảnh</th>
               <th className="px-6 py-4 text-left">Tiêu đề</th>
               <th className="px-6 py-4 text-left">Người tổ chức</th>
@@ -160,7 +171,6 @@ const EventsTable = () => {
                     {event.description}
                   </div>
                 </td>
-
                 <td className="px-6 py-4 text-center">
                   {event.participants_count}
                 </td>
