@@ -4,12 +4,12 @@ import axios from "axios";
 const CreateBlogButton = () => {
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
-  const [imageFile, setImageFile] = useState(null); // State lưu tệp ảnh
+  const [imageFile, setImageFile] = useState(null);
   const [interestOptions, setInterestOptions] = useState([]);
   const [interestId, setInterestId] = useState("");
   const [userId, setUserId] = useState(localStorage.getItem("user_id") || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isUploading, setIsUploading] = useState(false); // Trạng thái tải ảnh
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     const fetchInterests = async () => {
@@ -26,10 +26,9 @@ const CreateBlogButton = () => {
     fetchInterests();
   }, []);
 
-  // Hàm xử lý tải ảnh lên API
   const handleImageUpload = async () => {
     if (!imageFile) {
-      alert("Vui lòng chọn một file ảnh.");
+      alert("Please select an image file.");
       return;
     }
 
@@ -45,72 +44,66 @@ const CreateBlogButton = () => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      return response.data.background_img; // Trả về URL ảnh từ API
+      return response.data.background_img;
     } catch (error) {
       console.error("Error uploading image:", error);
-      alert("Có lỗi xảy ra khi tải ảnh lên.");
+      alert("There was an error uploading the image.");
       throw error;
     } finally {
       setIsUploading(false);
     }
   };
 
-  // Xử lý gửi form
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!content || !title || !interestId || !imageFile) {
-      alert("Vui lòng điền đầy đủ thông tin và chọn file ảnh.");
+      alert("Please fill in all fields and select an image.");
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      // Tải ảnh lên trước
       const imageUrl = await handleImageUpload();
-
-      // Dữ liệu blog cần gửi
       const blogData = {
         user_id: userId,
         interest_id: interestId,
-        content: content,
-        title: title,
+        content,
+        title,
         image: imageUrl,
         is_approve: true,
       };
 
-      // Gửi dữ liệu blog
       const response = await axios.post(
         "https://sharingcafe-be.onrender.com/api/blog",
         blogData
       );
       console.log("Blog created successfully:", response.data);
-      alert("Blog đã được tạo thành công!");
+      alert("Blog created successfully!");
 
-      // Reset form
       setContent("");
       setTitle("");
       setImageFile(null);
       setInterestId("");
     } catch (error) {
       console.error("Error creating blog:", error);
-      alert("Có lỗi xảy ra, vui lòng thử lại!");
+      alert("There was an error creating the blog.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
-        Tạo Blog Mới
+    <div className="max-w-2xl mx-auto p-8 text-black rounded-lg shadow-lg">
+      <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
+        Tạo Bài Viết Mới
       </h2>
-      <form onSubmit={handleSubmit} className="text-black">
-        <div className="mb-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
           <label
             htmlFor="title"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-medium text-gray-700"
           >
             Tiêu đề
           </label>
@@ -120,25 +113,26 @@ const CreateBlogButton = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Nhập tiêu đề bài viết"
           />
         </div>
 
-        <div className="mb-4">
+        <div>
           <label
             htmlFor="interest"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-medium text-gray-700"
           >
-            Lĩnh vực Quan Tâm
+            Chủ đề quan tâm
           </label>
           <select
             id="interest"
             value={interestId}
             onChange={(e) => setInterestId(e.target.value)}
             required
-            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">Chọn lĩnh vực</option>
+            <option value="">Chọn chủ đề cho bài viết</option>
             {interestOptions.map((interest) => (
               <option key={interest.interest_id} value={interest.interest_id}>
                 {interest.name}
@@ -147,10 +141,10 @@ const CreateBlogButton = () => {
           </select>
         </div>
 
-        <div className="mb-4">
+        <div>
           <label
             htmlFor="content"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-medium text-gray-700"
           >
             Nội dung
           </label>
@@ -159,17 +153,18 @@ const CreateBlogButton = () => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             required
-            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            rows="4"
+            className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows="6"
+            placeholder="Nhập nội dung của bạn ở đây..."
           ></textarea>
         </div>
 
-        <div className="mb-4">
+        <div>
           <label
             htmlFor="imageFile"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-medium text-gray-700"
           >
-            Hình ảnh
+            Tải ảnh
           </label>
           <input
             type="file"
@@ -177,20 +172,20 @@ const CreateBlogButton = () => {
             onChange={(e) => setImageFile(e.target.files[0])}
             accept="image/*"
             required
-            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         <button
           type="submit"
           disabled={isSubmitting || isUploading}
-          className={`w-full p-3 text-white rounded-md ${
+          className={`w-full py-3 font-bold rounded-lg transition-colors text-white ${
             isSubmitting || isUploading
-              ? "bg-gray-400"
+              ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-600 hover:bg-blue-700"
-          } transition`}
+          }`}
         >
-          {isSubmitting || isUploading ? "Đang xử lý..." : "Tạo Blog"}
+          {isSubmitting || isUploading ? "Đang tạo..." : "Tạo bài viết"}
         </button>
       </form>
     </div>

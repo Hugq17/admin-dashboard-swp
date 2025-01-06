@@ -124,10 +124,10 @@ const EventsTable = () => {
           Tạo Workshop
         </button>
       </div>
-      <div className="overflow-x-auto bg-white rounded-lg shadow-md">
-        <table className="min-w-full table-auto">
+      <div className="bg-white rounded-lg shadow-md">
+        <table className="table-fixed w-full h-[600px]">
           <thead className="bg-gray-100 text-gray-600">
-            <tr>
+            <tr className="border-b">
               <th
                 className="px-6 py-4 text-center cursor-pointer"
                 onClick={sortEventsByDate}
@@ -160,16 +160,6 @@ const EventsTable = () => {
                 <td className="px-6 py-4">{event.user_name}</td>
                 <td className="px-6 py-4 max-w-xs relative group">
                   <div className="truncate">{event.description}</div>
-                  <div
-                    className="absolute hidden group-hover:flex bg-gray-800 text-white text-sm rounded-lg shadow-md px-4 py-2 z-10 w-max max-w-xs"
-                    style={{
-                      top: "100%",
-                      left: "50%",
-                      transform: "translateX(-50%)",
-                    }}
-                  >
-                    {event.description}
-                  </div>
                 </td>
                 <td className="px-6 py-4 text-center">
                   {event.participants_count}

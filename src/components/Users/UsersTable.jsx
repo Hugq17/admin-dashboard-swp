@@ -102,9 +102,9 @@ const UsersTable = () => {
       </div>
 
       <div className="overflow-x-auto bg-white rounded-lg shadow-md">
-        <table className="min-w-full table-auto">
+        <table className="table-fixed w-full h-[600px]">
           <thead className="bg-gray-100 text-gray-600">
-            <tr>
+            <tr className="border-b">
               <th className="px-6 py-4 text-center">Avatar</th>
               <th className="px-6 py-4 text-left">Tên</th>
               <th className="px-6 py-4 text-left">Email</th>

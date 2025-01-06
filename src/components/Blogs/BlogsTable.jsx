@@ -127,40 +127,32 @@ const BlogsTable = () => {
             onClick={toggleModal}
             className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
           >
-            Tạo Blog
+            Tạo Bài Viết
           </button>
         </div>
       </div>
 
-      <div className="overflow-x-auto bg-white rounded-lg shadow-md">
-        <table className="min-w-full table-auto">
+      <div className="bg-white rounded-lg shadow-md">
+        <table className="table-fixed w-full h-[600px]">
           <thead className="bg-gray-100 text-gray-600">
-            <tr className="border-b hover:bg-gray-100 transition duration-300 ease-in-out">
-              <th className="px-6 py-4 text-center flex items-center justify-center">
-                Ngày tạo
-                <button
-                  onClick={sortBlogs}
-                  className="ml-2 text-gray-500 hover:text-gray-700 flex items-center space-x-1"
-                >
-                  <span>{sortOrder === "asc" ? " ▲" : " ▼"}</span>
-                </button>
-              </th>
-              <th className="px-6 py-4 text-center">Hình ảnh</th>
-              <th className="px-6 py-4 text-left">Tiêu đề</th>
-              <th className="px-6 py-4 text-left">Tác giả</th>
-              <th className="px-6 py-4 text-left">Nội dung</th>
-              <th className="px-6 py-4 text-center">Chủ đề</th>
-              <th className="px-6 py-4 text-center">Lượt bình luận</th>
+            <tr className="border-b">
+              <th className="px-6 py-4 text-center w-1/6">Ngày tạo</th>
+              <th className="px-6 py-4 text-center w-1/6">Hình ảnh</th>
+              <th className="px-6 py-4 text-left w-1/4">Tiêu đề</th>
+              <th className="px-6 py-4 text-left w-1/6">Tác giả</th>
+              <th className="px-6 py-4 text-left w-1/4">Nội dung</th>
+              <th className="px-6 py-4 text-center w-1/6">Chủ đề</th>
+              <th className="px-6 py-4 text-center w-1/6">Lượt bình luận</th>
+              <th className="px-6 py-4 text-center w-1/6">Trạng thái</th>
             </tr>
           </thead>
-
           <tbody className="text-gray-700">
             {currentBlogs.map((blog) => (
               <tr
                 key={blog.blog_id}
                 className="border-b hover:bg-gray-100 transition duration-300 ease-in-out"
               >
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                <td className="px-6 py-4 text-sm text-center">
                   {new Date(blog.created_at).toLocaleString("vi-VN", {
                     day: "2-digit",
                     month: "2-digit",
@@ -169,24 +161,27 @@ const BlogsTable = () => {
                     minute: "2-digit",
                   })}
                 </td>
-
                 <td className="px-6 py-4 text-center">
                   <img
                     src={blog.image}
                     alt={blog.title}
-                    className="w-12 h-12 object-cover rounded-md"
+                    className="w-12 h-12 object-cover rounded-md mx-auto"
                   />
                 </td>
-                <td className="px-6 py-4">{blog.title}</td>
+                <td className="px-6 py-4 truncate">{blog.title}</td>
                 <td className="px-6 py-4">{blog.user_name}</td>
-                <td className="px-6 py-4 max-w-xs relative group">
-                  <div className="truncate">{blog.content}</div>
-                  <div className="absolute hidden group-hover:flex bg-gray-800 text-white text-sm rounded-lg shadow-md px-4 py-2 z-10 w-max max-w-xs">
-                    {blog.content}
-                  </div>
-                </td>
+                <td className="px-6 py-4 truncate">{blog.content}</td>
                 <td className="px-6 py-4 text-center">{blog.interest_name}</td>
                 <td className="px-6 py-4 text-center">{blog.comments_count}</td>
+                <td
+                  className={`px-6 py-4 text-center ${
+                    blog.is_visible
+                      ? "text-green-600 font-semibold"
+                      : "text-red-600 font-semibold"
+                  }`}
+                >
+                  {blog.is_visible ? "Hiển thị" : "Ẩn"}
+                </td>
               </tr>
             ))}
           </tbody>
