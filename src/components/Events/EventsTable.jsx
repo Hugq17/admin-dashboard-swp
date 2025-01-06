@@ -15,7 +15,8 @@ const EventsTable = () => {
   const [eventsPerPage] = useState(5);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [todayEventsCount, setTodayEventsCount] = useState(0);
-  const [sortOrder, setSortOrder] = useState("asc"); // Thứ tự sắp xếp
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [selectedEvent, setSelectedEvent] = useState(null); // Lưu thông tin sự kiện được chọn
 
   const getTodayDate = () => {
     const now = new Date();
@@ -29,6 +30,11 @@ const EventsTable = () => {
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
+  };
+
+  const handleViewDetails = (event) => {
+    setSelectedEvent(event); // Lưu thông tin sự kiện được chọn vào state
+    setIsModalOpen(true);
   };
 
   useEffect(() => {
@@ -92,7 +98,28 @@ const EventsTable = () => {
             >
               &times;
             </button>
-            <CreateEventButton />
+            {selectedEvent && (
+              <div>
+                <h2 className="text-2xl font-semibold mb-4">
+                  {selectedEvent.title}
+                </h2>
+                <p className="mb-2">
+                  <strong>Người tổ chức:</strong> {selectedEvent.user_name}
+                </p>
+                <p className="mb-2">
+                  <strong>Thời gian:</strong>{" "}
+                  {new Date(selectedEvent.time_of_event).toLocaleString(
+                    "vi-VN"
+                  )}
+                </p>
+                <p className="mb-2">
+                  <strong>Địa điểm:</strong> {selectedEvent.location}
+                </p>
+                <p>
+                  <strong>Mô tả:</strong> {selectedEvent.description}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -141,6 +168,7 @@ const EventsTable = () => {
               <th className="px-6 py-4 text-left">Mô tả</th>
               <th className="px-6 py-4 text-center">Số người tham gia</th>
               <th className="px-6 py-4 text-center">Địa điểm</th>
+              <th className="px-6 py-4 text-center">Chi tiết</th>
             </tr>
           </thead>
           <tbody className="text-gray-700">
@@ -165,6 +193,14 @@ const EventsTable = () => {
                   {event.participants_count}
                 </td>
                 <td className="px-6 py-4 text-center">{event.location}</td>
+                <td className="px-6 py-4 text-center">
+                  <button
+                    onClick={() => handleViewDetails(event)}
+                    className="text-blue-500 hover:underline"
+                  >
+                    Xem chi tiết
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
