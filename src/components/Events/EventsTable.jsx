@@ -28,6 +28,7 @@ const EventsTable = () => {
   });
   const [eventImageFile, setEventImageFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [participants, setParticipants] = useState([]);
 
   const handleUpdateInputChange = (e) => {
     const { name, value } = e.target;
@@ -129,12 +130,30 @@ const EventsTable = () => {
     setIsModalOpen(!isModalOpen);
   };
 
-  const handleShowDetails = (workshop) => {
-    setSelectedEvent(workshop);
+  const handleShowDetails = async (event) => {
+    setSelectedEvent(event);
+    try {
+      const token = localStorage.getItem("accessToken"); // Lấy token từ localStorage hoặc nguồn khác
+      const config = {
+        headers: {
+          Authorization: `${token}`, // Gửi token kèm theo
+        },
+      };
+
+      const response = await axios.get(
+        `https://sharingcafe-be.onrender.com/api/auth/user/event/event-participants?event_id=${event.event_id}`,
+        config
+      );
+      setParticipants(response.data);
+    } catch (err) {
+      console.error("Error fetching participants:", err);
+      alert("Có lỗi khi tải danh sách người tham gia.");
+    }
   };
 
   const closeDetails = () => {
     setSelectedEvent(null);
+    setParticipants([]);
   };
 
   const handleViewDetails = (event) => {
@@ -148,11 +167,14 @@ const EventsTable = () => {
         const response = await axios.get(
           "https://sharingcafe-be.onrender.com/api/event"
         );
-        setEvents(response.data);
-        setFilteredEvents(response.data);
+        // Kiểm tra response.data có phải là mảng không
+        const eventsData = Array.isArray(response.data) ? response.data : [];
+
+        setEvents(eventsData);
+        setFilteredEvents(eventsData);
 
         const todayDate = getTodayDate();
-        const todayEvents = response.data.filter(
+        const todayEvents = eventsData.filter(
           (event) => new Date(event.created_at) >= new Date(todayDate)
         );
         setTodayEventsCount(todayEvents.length);
@@ -212,35 +234,60 @@ const EventsTable = () => {
           <div className="bg-white rounded-lg w-11/12 md:w-2/3 lg:w-1/2 p-8 relative">
             <button
               onClick={closeDetails}
-              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
+              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800 text-2xl font-bold"
             >
               &times;
             </button>
-            {selectedEvent && (
-              <div>
-                <h2 className="text-2xl font-semibold mb-4">
-                  {selectedEvent.title}
-                </h2>
-                <p className="mb-2">
-                  <strong>Người tổ chức:</strong> {selectedEvent.user_name}
-                </p>
-                <p className="mb-2">
-                  <strong>Thời gian:</strong>{" "}
-                  {new Date(selectedEvent.time_of_event).toLocaleString(
-                    "vi-VN"
-                  )}
-                </p>
-                <p className="mb-2">
-                  <strong>Địa điểm:</strong> {selectedEvent.location}
-                </p>
-                <p>
-                  <strong>Mô tả:</strong> {selectedEvent.description}
-                </p>
+            <div>
+              <h2 className="text-2xl font-semibold mb-4">
+                {selectedEvent.title}
+              </h2>
+              <p className="mb-2">
+                <strong>Người tổ chức:</strong> {selectedEvent.user_name}
+              </p>
+              <p className="mb-2">
+                <strong>Thời gian:</strong>{" "}
+                {new Date(selectedEvent.time_of_event).toLocaleString("vi-VN")}
+              </p>
+              <p className="mb-2">
+                <strong>Địa điểm:</strong> {selectedEvent.location}
+              </p>
+              <p>
+                <strong>Mô tả:</strong> {selectedEvent.description}
+              </p>
+
+              {/* Phần hiển thị danh sách người tham gia */}
+              <div className="mt-6">
+                <h3 className="text-xl font-semibold mb-3">
+                  Danh sách người tham gia
+                </h3>
+                {participants && participants.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {participants.map((participant) => (
+                      <div
+                        key={participant.user_id}
+                        className="flex items-center space-x-4 p-2 border rounded-md"
+                      >
+                        <img
+                          src={participant.profile_avatar}
+                          alt={participant.user_name}
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                        <span className="font-medium">
+                          {participant.user_name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p>Không có người tham gia.</p>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </div>
       )}
+
       <motion.div
         className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8"
         initial={{ opacity: 0, y: 20 }}
