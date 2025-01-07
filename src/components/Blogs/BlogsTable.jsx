@@ -13,9 +13,21 @@ const BlogsTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [blogsPerPage] = useState(5);
+
   const [selectedBlog, setSelectedBlog] = useState(null);
-  const [todayBlogsCount, setTodayBlogsCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [formData, setFormData] = useState({
+    title: "",
+    is_visible: false,
+    content: "",
+    image: "",
+  });
+
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [todayBlogsCount, setTodayBlogsCount] = useState(0);
+  const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -47,6 +59,93 @@ const BlogsTable = () => {
     );
     setFilteredBlogs(filtered);
   }, [searchQuery, blogs]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: name === "is_visible" ? value === "true" : value,
+    }));
+  };
+
+  const handleImageUpload = async () => {
+    if (!imageFile) {
+      alert("Please select an image file.");
+      return null;
+    }
+
+    setIsUploading(true);
+    const uploadData = new FormData();
+    uploadData.append("background_img", imageFile);
+
+    try {
+      const response = await axios.post(
+        "https://sharingcafe-be.onrender.com/api/image",
+        uploadData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      console.log("Đường dẫn ảnh upload:", response.data.background_img);
+      alert("Image uploaded successfully!");
+      return response.data.background_img; // Trả về đường dẫn ảnh
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("There was an error uploading the image.");
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const openUpdateModal = (blog) => {
+    setSelectedBlog(blog);
+    setFormData({
+      title: blog.title,
+      is_visible: blog.is_visible,
+      content: blog.content,
+      image: blog.image,
+    });
+    setIsUpdateModalOpen(true);
+  };
+
+  const closeUpdateModal = () => {
+    setIsUpdateModalOpen(false);
+    setSelectedBlog(null);
+  };
+
+  const handleUpdateBlog = async () => {
+    if (!selectedBlog) return;
+
+    try {
+      let imageUrl = formData.image; // Lấy URL ảnh hiện tại từ formData
+
+      // Nếu có file ảnh mới, tiến hành upload và lấy URL mới
+      if (imageFile) {
+        const uploadedImageUrl = await handleImageUpload();
+        if (uploadedImageUrl) {
+          imageUrl = uploadedImageUrl;
+        }
+      }
+
+      // Tạo đối tượng dữ liệu cập nhật với trường image mới (hoặc giữ nguyên nếu không có ảnh mới)
+      const updatedData = {
+        ...formData,
+        image: imageUrl,
+      };
+
+      await axios.put(
+        `https://sharingcafe-be.onrender.com/api/blog/${selectedBlog.blog_id}`,
+        updatedData
+      );
+      alert("Cập nhật bài viết thành công!");
+      closeUpdateModal();
+    } catch (error) {
+      console.error("Error updating blog:", error);
+      alert("Có lỗi xảy ra khi cập nhật bài viết.");
+    }
+  };
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -81,6 +180,7 @@ const BlogsTable = () => {
           </div>
         </div>
       )}
+
       <motion.div
         className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8"
         initial={{ opacity: 0, y: 20 }}
@@ -125,6 +225,7 @@ const BlogsTable = () => {
               <th className="px-6 py-4 text-center">Lượt bình luận</th>
               <th className="px-6 py-4 text-center">Trạng thái</th>
               <th className="px-6 py-4 text-center">Chi tiết</th>
+              <th className="px-6 py-4 text-center">Hành động</th>
             </tr>
           </thead>
           <tbody>
@@ -156,13 +257,20 @@ const BlogsTable = () => {
                 >
                   {blog.is_visible ? "Hiển thị" : "Ẩn"}
                 </td>
-
                 <td className="px-6 py-4 text-center">
                   <button
                     onClick={() => handleShowDetails(blog)}
                     className="text-blue-500 hover:underline"
                   >
                     Xem chi tiết
+                  </button>
+                </td>
+                <td className="px-6 py-4 text-center">
+                  <button
+                    onClick={() => openUpdateModal(blog)}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    Cập nhật
                   </button>
                 </td>
               </tr>
@@ -178,10 +286,17 @@ const BlogsTable = () => {
         currentPage={currentPage}
       />
 
-      {/* Modal chi tiết bài viết */}
       {selectedBlog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 text-black">
-          <div className="bg-white w-11/12 md:w-1/2 lg:w-1/3 rounded-lg p-6">
+          <div className="bg-white w-11/12 md:w-1/2 lg:w-1/3 rounded-lg p-6 max-h-[80vh] overflow-y-auto relative">
+            <button
+              onClick={closeDetails}
+              className="absolute top-4 right-4 text-gray-600 bg-transparent hover:bg-red-600 hover:text-white w-8 h-8 flex items-center justify-center transition-colors duration-200"
+              aria-label="Đóng"
+            >
+              &times;
+            </button>
+
             <h2 className="text-xl font-bold mb-4">Chi tiết bài viết</h2>
             <p>
               <strong>Tiêu đề:</strong> {selectedBlog.title}
@@ -208,17 +323,84 @@ const BlogsTable = () => {
                 {selectedBlog.is_visible ? "Hiển thị" : "Ẩn"}
               </span>
             </p>
-
             <p>
               <strong>Nội dung:</strong> {selectedBlog.content}
             </p>
+          </div>
+        </div>
+      )}
 
-            <button
-              onClick={closeDetails}
-              className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-            >
-              Đóng
-            </button>
+      {isUpdateModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 text-black">
+          <div className="bg-white rounded-lg p-6 w-1/2">
+            <h2 className="text-xl font-bold mb-4">Cập nhật bài viết</h2>
+
+            <div className="mb-4">
+              <label className="block font-semibold mb-2">Tiêu đề</label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-lg"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block font-semibold mb-2">Trạng thái</label>
+              <select
+                name="is_visible"
+                value={formData.is_visible}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-lg"
+              >
+                <option value={true}>Hiển thị</option>
+                <option value={false}>Ẩn</option>
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block font-semibold mb-2">Nội dung</label>
+              <textarea
+                name="content"
+                value={formData.content}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-lg"
+                rows="6"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="imageFile"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Tải ảnh
+              </label>
+              <input
+                type="file"
+                id="imageFile"
+                onChange={(e) => setImageFile(e.target.files[0])}
+                accept="image/*"
+                required
+                className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={closeUpdateModal}
+                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleUpdateBlog}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              >
+                Lưu thay đổi
+              </button>
+            </div>
           </div>
         </div>
       )}

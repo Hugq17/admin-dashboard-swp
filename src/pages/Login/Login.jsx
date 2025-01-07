@@ -69,22 +69,22 @@ const Login = ({ updateStatus }) => {
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
             <label className="block text-gray-600 font-medium mb-2">
-              Username
+              Tài khoản
             </label>
             <input
               value={email}
-              placeholder="Enter your username"
+              placeholder="Nhập tài khoản"
               onChange={handleInputChangeEmail}
               className="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none text-black"
             />
           </div>
           <div className="relative">
             <label className="block text-gray-600 font-medium mb-2">
-              Password
+              Mật khẩu
             </label>
             <div className="relative flex items-center">
               <input
-                placeholder="Enter your password"
+                placeholder="Nhập mật khẩu"
                 value={password}
                 type={showPassword ? "text" : "password"}
                 onChange={handleInputChangePassword}
