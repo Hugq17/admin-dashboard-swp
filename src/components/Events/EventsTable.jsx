@@ -129,6 +129,14 @@ const EventsTable = () => {
     setIsModalOpen(!isModalOpen);
   };
 
+  const handleShowDetails = (workshop) => {
+    setSelectedEvent(workshop);
+  };
+
+  const closeDetails = () => {
+    setSelectedEvent(null);
+  };
+
   const handleViewDetails = (event) => {
     setSelectedEvent(event); // Lưu thông tin sự kiện được chọn vào state
     setIsModalOpen(true);
@@ -187,10 +195,23 @@ const EventsTable = () => {
   return (
     <div className="container mx-auto p-6">
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center text-black">
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-lg w-11/12 md:w-2/3 lg:w-1/2 p-8 relative">
             <button
               onClick={toggleModal}
+              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
+            >
+              &times;
+            </button>
+            <CreateEventButton />
+          </div>
+        </div>
+      )}
+      {selectedEvent && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center text-black">
+          <div className="bg-white rounded-lg w-11/12 md:w-2/3 lg:w-1/2 p-8 relative">
+            <button
+              onClick={closeDetails}
               className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
             >
               &times;
@@ -293,7 +314,7 @@ const EventsTable = () => {
                 <td className="px-6 py-4 text-center">{event.location}</td>
                 <td className="px-6 py-4 text-center">
                   <button
-                    onClick={() => handleViewDetails(event)}
+                    onClick={() => handleShowDetails(event)}
                     className="text-blue-500 hover:underline"
                   >
                     Xem chi tiết
