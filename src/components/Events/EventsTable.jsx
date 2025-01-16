@@ -6,7 +6,7 @@ import CreateEventButton from "./CreateEventButton";
 import { motion } from "framer-motion";
 import StatCard from "../../components/common/StatCard";
 import { BookOpen, BookOpenCheck } from "lucide-react";
-
+import Swal from "sweetalert2";
 const EventsTable = () => {
   const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
@@ -83,36 +83,47 @@ const EventsTable = () => {
     setEventImageFile(null); // Reset file chọn
   };
 
-  const handleUpdateEvent = async () => {
-    if (!selectedEvent) return;
+  const handleUpdateEvent = async (event) => {
+    const currentStatus = event.is_visible ? "Hiển thị" : "Ẩn";
+    const newStatus = event.is_visible ? "Ẩn" : "Hiển thị";
+
+    const result = await Swal.fire({
+      title: "Xác nhận cập nhật trạng thái",
+      text: `Bài viết hiện đang ở trạng thái "${currentStatus}". Bạn có chắc chắn muốn chuyển thành "${newStatus}" không?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Có, cập nhật",
+      cancelButtonText: "Hủy",
+    });
+
+    if (!result.isConfirmed) return; // Nếu người dùng nhấn "Hủy", thoát hàm
 
     try {
-      let imageUrl = updateFormData.background_img;
-
-      // Nếu có file ảnh mới, tiến hành upload và lấy URL mới
-      if (eventImageFile) {
-        const uploadedImageUrl = await handleEventImageUpload();
-        if (uploadedImageUrl) {
-          imageUrl = uploadedImageUrl;
-        }
-      }
-
-      // Tạo dữ liệu cập nhật với trường background_img mới
-      const updatedData = {
-        ...updateFormData,
-        background_img: imageUrl,
-      };
-
+      // Gửi yêu cầu cập nhật lên server
       await axios.put(
-        `https://sharingcafe-be.onrender.com/api/event/${selectedEvent.event_id}`,
-        updatedData
+        `https://sharingcafe-be.onrender.com/api/admin/event/${event.event_id}`,
+        { is_visible: !event.is_visible } // Payload đúng yêu cầu
       );
-      alert("Cập nhật sự kiện thành công!");
-      closeUpdateModal();
-      // Tùy chọn: Cập nhật lại danh sách sự kiện hoặc gọi fetchEvents() để làm mới dữ liệu từ server
+
+      Swal.fire(
+        "Thành công!",
+        "Trạng thái bài viết đã được cập nhật.",
+        "success"
+      );
+
+      // Cập nhật lại dữ liệu trên client
+      const updatedEvents = events.map((e) =>
+        e.event_id === event.event_id ? { ...e, is_visible: !e.is_visible } : e
+      );
+      setEvents(updatedEvents);
+      setFilteredEvents(updatedEvents);
     } catch (error) {
       console.error("Error updating event:", error);
-      alert("Có lỗi xảy ra khi cập nhật sự kiện.");
+      Swal.fire(
+        "Lỗi!",
+        "Có lỗi xảy ra khi cập nhật trạng thái bài viết.",
+        "error"
+      );
     }
   };
 
@@ -330,7 +341,7 @@ const EventsTable = () => {
               <th className="px-6 py-4 text-center">Hình ảnh</th>
               <th className="px-6 py-4 text-left">Tiêu đề</th>
               <th className="px-6 py-4 text-left">Người tổ chức</th>
-              <th className="px-6 py-4 text-left">Mô tả</th>
+              <th className="px-6 py-4 text-left">Trạng thái</th>
               <th className="px-6 py-4 text-center">Số người tham gia</th>
               <th className="px-6 py-4 text-center">Địa điểm</th>
               <th className="px-6 py-4 text-center">Chi tiết</th>
@@ -352,8 +363,14 @@ const EventsTable = () => {
                 </td>
                 <td className="px-6 py-4">{event.title}</td>
                 <td className="px-6 py-4">{event.user_name}</td>
-                <td className="px-6 py-4 max-w-xs relative group">
-                  <div className="truncate">{event.description}</div>
+                <td
+                  className={`px-6 py-4 text-center ${
+                    event.is_visible
+                      ? "text-green-600 font-semibold"
+                      : "text-red-600 font-semibold"
+                  }`}
+                >
+                  {event.is_visible ? "Hiển thị" : "Ẩn"}
                 </td>
                 <td className="px-6 py-4 text-center">
                   {event.participants_count}
@@ -369,7 +386,7 @@ const EventsTable = () => {
                 </td>
                 <td className="px-6 py-4 text-center">
                   <button
-                    onClick={() => openUpdateModal(event)}
+                    onClick={() => handleUpdateEvent(event)}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                   >
                     Cập nhật
