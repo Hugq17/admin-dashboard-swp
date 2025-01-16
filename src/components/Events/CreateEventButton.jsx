@@ -60,6 +60,22 @@ const CreateEventButton = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const now = new Date();
+    const startTime = new Date(timeOfEvent);
+    const endTime = new Date(endOfEvent);
+
+    // Kiểm tra nếu thời gian bắt đầu ở quá khứ
+    if (startTime < now) {
+      alert("Thời gian bắt đầu không thể ở quá khứ.");
+      return;
+    }
+
+    // Kiểm tra nếu thời gian kết thúc trước hoặc bằng thời gian bắt đầu
+    if (endTime <= startTime) {
+      alert("Thời gian kết thúc phải sau thời gian bắt đầu.");
+      return;
+    }
+
     if (
       !title ||
       !interestId ||
@@ -159,8 +175,6 @@ const CreateEventButton = () => {
           </select>
         </div>
 
-      
-
         <div className="mb-4">
           <label
             htmlFor="location"
@@ -190,6 +204,7 @@ const CreateEventButton = () => {
             id="timeOfEvent"
             value={timeOfEvent}
             onChange={(e) => setTimeOfEvent(e.target.value)}
+            min={new Date().toISOString().slice(0, 16)} // Giới hạn thời gian bắt đầu không ở quá khứ
             required
             className="w-full p-3 border border-gray-300 rounded-md"
           />
@@ -207,6 +222,7 @@ const CreateEventButton = () => {
             id="endOfEvent"
             value={endOfEvent}
             onChange={(e) => setEndOfEvent(e.target.value)}
+            min={timeOfEvent} // Giới hạn thời gian kết thúc phải sau thời gian bắt đầu
             required
             className="w-full p-3 border border-gray-300 rounded-md"
           />
