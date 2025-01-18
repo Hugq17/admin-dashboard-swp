@@ -57,6 +57,13 @@ const CreateEventButton = () => {
     }
   };
 
+  const getLocalISOString = () => {
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000; // Chuyển phút sang milliseconds
+    const localISOTime = new Date(now.getTime() - offset).toISOString();
+    return localISOTime.slice(0, 16);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
