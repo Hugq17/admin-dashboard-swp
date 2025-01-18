@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import icon từ react-icons
-
+import img from "../../assets/img.jpg";
 const Login = ({ updateStatus }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -44,9 +44,7 @@ const Login = ({ updateStatus }) => {
 
       const data = await response.json();
 
-      // Kiểm tra xem có accessToken và user_id trong data hay không
       if (data && data.accessToken && data.user_id) {
-        // Lưu accessToken và user_id vào localStorage
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("user_id", data.user_id);
 
@@ -63,6 +61,14 @@ const Login = ({ updateStatus }) => {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600">
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-sm w-full">
+        {/* Thêm hình ảnh trên form */}
+        <div className="flex justify-center mb-6">
+          <img
+            src={img} // Đường dẫn tới ảnh của bạn
+            alt="Login Illustration"
+            className="h-20 w-20 object-cover"
+          />
+        </div>
         <h1 className="text-3xl font-semibold text-gray-800 text-center mb-6">
           Đăng nhập
         </h1>
@@ -93,7 +99,7 @@ const Login = ({ updateStatus }) => {
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
-                className="absolute right-0 mr-3 flex items-center justify-center text-gray-600 hover:text-gray-800 h-full focus:outline-none "
+                className="absolute right-0 mr-3 flex items-center justify-center text-gray-600 hover:text-gray-800 h-full focus:outline-none"
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>

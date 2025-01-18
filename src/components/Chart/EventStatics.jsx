@@ -18,7 +18,6 @@ const EventStatics = () => {
   const [averageLineData, setAverageLineData] = useState([]);
 
   useEffect(() => {
-    // Fetch data from the API
     const fetchData = async () => {
       try {
         const response = await fetch(
@@ -26,27 +25,24 @@ const EventStatics = () => {
         );
         const data = await response.json();
 
-        // Format data
         const formattedData = data.map((item) => ({
-          name: `${item.event_month}/${item.event_year}`,
-          events: Math.max(0, Math.round(parseFloat(item.event_count))) || 0,
-          year: parseInt(item.event_year, 10),
+          name: `${item.event_month}/${item.event_year}`, // Tên hiển thị trên trục X
+          events: Math.max(0, Math.round(parseFloat(item.event_count))) || 0, // Số sự kiện
+          year: parseInt(item.event_year, 10), // Năm
         }));
 
-        // Get unique years
         const uniqueYears = [
           ...new Set(formattedData.map((item) => item.year)),
         ];
         setYears(uniqueYears);
 
-        // Compute yearly average and round it to an integer
         const averages = uniqueYears.map((year) => {
           const yearData = formattedData.filter((item) => item.year === year);
           const totalEvents = yearData.reduce(
             (sum, item) => sum + item.events,
             0
           );
-          const average = Math.floor(totalEvents / 12); // Round down to the nearest integer
+          const average = Math.floor(totalEvents / 12);
           return { year, average };
         });
 
@@ -61,7 +57,7 @@ const EventStatics = () => {
     fetchData();
   }, []);
 
-  // Handle year change
+  // dropdown chọn năm
   const handleYearChange = (event) => {
     const year = parseInt(event.target.value, 10);
     setSelectedYear(year);
@@ -69,8 +65,7 @@ const EventStatics = () => {
     const filtered = chartData.filter((item) => item.year === year);
     setFilteredData(filtered);
   };
-
-  // Get the average value for the selected year
+  // Tính giá trị trung bình
   const averageValue =
     averageLineData.find((avg) => avg.year === selectedYear)?.average || 0;
 
@@ -85,7 +80,7 @@ const EventStatics = () => {
         Số Workshop theo năm
       </h2>
 
-      {/* Dropdown */}
+      {/* Dropdown chọn năm*/}
       <div className="mb-4">
         <select
           className="bg-gray-700 text-gray-100 p-2 rounded-lg"
@@ -100,7 +95,7 @@ const EventStatics = () => {
           ))}
         </select>
       </div>
-
+      {/*Biểu đồ*/}
       <div className="h-80">
         <ResponsiveContainer width={"100%"} height={"100%"}>
           <LineChart data={filteredData}>
@@ -130,7 +125,7 @@ const EventStatics = () => {
               }}
             />
 
-            {/* Blogs Data */}
+            {/* Data sự kiện*/}
             <Line
               type="monotone"
               dataKey="events"
@@ -139,7 +134,7 @@ const EventStatics = () => {
               dot={{ fill: "#6366F1", strokeWidth: 2, r: 6 }}
               activeDot={{ r: 8, strokeWidth: 2 }}
             />
-            {/* Average Line */}
+            {/* Line đường trung bình tính theo năm */}
             {selectedYear && (
               <Line
                 type="monotone"

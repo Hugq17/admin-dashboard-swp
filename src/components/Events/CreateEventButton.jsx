@@ -139,7 +139,7 @@ const CreateEventButton = () => {
   return (
     <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
-        Tạo Event Mới
+        Tạo Workshop Mới
       </h2>
       <form onSubmit={handleSubmit} className="text-black">
         <div className="mb-4">
@@ -278,7 +278,7 @@ const CreateEventButton = () => {
               : "bg-blue-600 hover:bg-blue-700"
           } transition`}
         >
-          {isSubmitting || isUploading ? "Đang xử lý..." : "Tạo Event"}
+          {isSubmitting || isUploading ? "Đang xử lý..." : "Tạo Workshop"}
         </button>
       </form>
     </div>
